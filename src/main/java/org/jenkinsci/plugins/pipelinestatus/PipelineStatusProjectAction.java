@@ -8,14 +8,10 @@ import hudson.model.Run;
 import java.util.Map;
 
 public class PipelineStatusProjectAction extends Actionable implements Action {
-  private final Run<?, ?> run;
   private PipelineStatusAction action = null;
 
   public PipelineStatusProjectAction(Job<?, ?> job) {
-    this.run = job.getLastBuild();
-    if (this.run != null) {
-      this.action = this.run.getAction(PipelineStatusAction.class);
-    }
+    action = PipelineStatusAction.getPipelineStatusAction(job.getLastBuild(), true);
   }
 
   @Override

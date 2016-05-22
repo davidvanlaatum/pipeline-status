@@ -24,6 +24,18 @@ public class PipelineStatusAction extends Actionable implements Action {
     this.build = build;
   }
 
+  public static PipelineStatusAction getPipelineStatusAction(Run<?,?> build, boolean create) {
+    PipelineStatusAction status = null;
+    if (build != null) {
+      status = build.getAction(PipelineStatusAction.class);
+      if (status == null && create) {
+        status = new PipelineStatusAction(build);
+        build.addAction(status);
+      }
+    }
+    return status;
+  }
+
   public Run getBuild() {
     return build;
   }

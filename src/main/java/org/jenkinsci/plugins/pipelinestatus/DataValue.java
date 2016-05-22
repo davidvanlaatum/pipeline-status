@@ -73,11 +73,31 @@ public class DataValue implements Serializable {
 
   public Object getSortValue() {
     Object rt = null;
-    switch(type) {
+    switch (type) {
       case INTERVAL:
         rt = value;
         break;
     }
     return rt;
+  }
+
+  public void incValue(Integer amount) {
+    if (value instanceof Integer) {
+      value = (Integer) value + amount;
+    } else if (value instanceof Long) {
+      value = (Long) value + amount;
+    } else {
+      throw new IllegalStateException("Can't increment value of type " + (value != null ? value.getClass() : null));
+    }
+  }
+
+  public void decValue(Integer amount) {
+    if (value instanceof Integer) {
+      value = (Integer) value - amount;
+    } else if (value instanceof Long) {
+      value = (Long) value - amount;
+    } else {
+      throw new IllegalStateException("Can't decrement value of type " + (value != null ? value.getClass() : null));
+    }
   }
 }

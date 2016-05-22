@@ -69,11 +69,7 @@ public class SetStatusVariableStep extends AbstractStepImpl implements Serializa
 
     @Override
     protected Void run() throws Exception {
-      PipelineStatusAction status = build.getAction(PipelineStatusAction.class);
-      if (status == null) {
-        status = new PipelineStatusAction(build);
-        build.addAction(status);
-      }
+      PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(build, true);
       status.set(step.getName(), step.getValue(), step.getType());
       return null;
     }
