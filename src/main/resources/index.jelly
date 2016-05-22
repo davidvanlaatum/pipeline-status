@@ -1,0 +1,4 @@
+<?jelly escape-by-default='true'?>
+<div>
+  Displays a table of build status variables set in a pipeline
+</div>

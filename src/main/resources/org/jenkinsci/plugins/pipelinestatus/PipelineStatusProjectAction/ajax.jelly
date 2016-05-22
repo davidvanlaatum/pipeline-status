@@ -1,0 +1,9 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:local="local">
+  <l:ajax contentType="text/html">
+    <j:if test="${it.hasData()}">
+      <st:include it="${it.buildAction}" page="status.jelly"/>
+    </j:if>
+  </l:ajax>
+</j:jelly>

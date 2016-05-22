@@ -1,0 +1,16 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:local="local">
+  <table class="bigtable sortable stripped">
+    <tr>
+      <th>Name</th>
+      <th>Value</th>
+    </tr>
+    <j:forEach items="${it.data}" var="item">
+      <tr>
+        <td>${item.key}</td>
+        <td data="${item.value.sortValue}">${item.value}</td>
+      </tr>
+    </j:forEach>
+  </table>
+</j:jelly>
