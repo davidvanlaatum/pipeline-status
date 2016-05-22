@@ -1,12 +1,12 @@
 package org.jenkinsci.plugins.pipelinestatus;
 
-import org.jfree.chart.axis.PeriodAxis;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatterBuilder;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
 import java.io.Serializable;
+import java.util.List;
 
 @ExportedBean
 public class DataValue implements Serializable {
@@ -55,6 +55,9 @@ public class DataValue implements Serializable {
               .appendSuffix("ms")
               .toFormatter());
         }
+      case LIST:
+        rt = value.toString();
+        break;
     }
 
     return rt == null ? "{null}" : rt;
@@ -98,6 +101,15 @@ public class DataValue implements Serializable {
       value = (Long) value - amount;
     } else {
       throw new IllegalStateException("Can't decrement value of type " + (value != null ? value.getClass() : null));
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  public void append(Object value) {
+    if (this.value instanceof List) {
+      ((List) this.value).add(value);
+    } else {
+      throw new IllegalStateException("Can't append to value of type " + (this.value != null ? this.value.getClass() : null));
     }
   }
 }
