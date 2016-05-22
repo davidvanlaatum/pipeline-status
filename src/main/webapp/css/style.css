@@ -14,3 +14,7 @@ ul.pipeline-status-list {
 table.pipeline_status_vars_table {
     width: auto;
 }
+
+.data-type-INTERVAL, .data-type-NUMBER {
+    text-align: right;
+}
