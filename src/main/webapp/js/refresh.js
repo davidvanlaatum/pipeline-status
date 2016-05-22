@@ -13,4 +13,6 @@ jQuery(document).ready(function () {
     window.setInterval(function () {
         updateStatusVars();
     }, 5000);
+
+    updateStatusVars();
 });

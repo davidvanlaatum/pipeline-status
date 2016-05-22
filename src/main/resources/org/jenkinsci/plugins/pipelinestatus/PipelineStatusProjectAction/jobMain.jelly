@@ -2,9 +2,9 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
          xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:local="local">
   <script type="text/javascript" src="${rootURL}/plugin/pipeline-status/js/refresh.js"></script>
+  <link rel="stylesheet" type="text/css" href="${rootURL}/plugin/pipeline-status/css/style.css"/>
+  <h2>Status Variables</h2>
   <div id="pipeline_status_vars">
-    <j:if test="${action.hasData()}">
-      <st:include it="${action.buildAction}" page="status.jelly"/>
-    </j:if>
+    Loading
   </div>
 </j:jelly>

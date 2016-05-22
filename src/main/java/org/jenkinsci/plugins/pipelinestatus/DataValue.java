@@ -55,6 +55,7 @@ public class DataValue implements Serializable {
               .appendSuffix("ms")
               .toFormatter());
         }
+        break;
       case LIST:
         rt = value.toString();
         break;
@@ -111,5 +112,9 @@ public class DataValue implements Serializable {
     } else {
       throw new IllegalStateException("Can't append to value of type " + (this.value != null ? this.value.getClass() : null));
     }
+  }
+
+  public boolean isList() {
+    return type == DataType.LIST;
   }
 }

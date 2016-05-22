@@ -1,0 +1,16 @@
+ul.pipeline-status-list {
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-left: 15px;
+}
+
+.pipeline_status_vars_table td {
+    vertical-align: top;
+}
+
+table.pipeline_status_vars_table {
+    width: auto;
+}
