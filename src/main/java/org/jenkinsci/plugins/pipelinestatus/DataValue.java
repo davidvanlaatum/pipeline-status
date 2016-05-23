@@ -39,6 +39,8 @@ public class DataValue implements Serializable {
 
     switch (type) {
       case OBJECT:
+      case NUMBER:
+      case LIST:
         rt = value != null ? value.toString() : null;
         break;
       case INTERVAL:
@@ -55,9 +57,6 @@ public class DataValue implements Serializable {
               .appendSuffix("ms")
               .toFormatter());
         }
-        break;
-      case LIST:
-        rt = value.toString();
         break;
     }
 
