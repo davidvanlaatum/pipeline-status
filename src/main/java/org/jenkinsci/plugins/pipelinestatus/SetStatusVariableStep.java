@@ -23,7 +23,9 @@ public class SetStatusVariableStep extends AbstractStepImpl implements Serializa
   public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
   private final String name;
   private Object value;
-  private DataType type = DataType.OBJECT;
+  private DataType type;
+  private String table;
+  private Integer column;
 
   @DataBoundConstructor
   public SetStatusVariableStep(@NotNull String name) {
@@ -58,6 +60,24 @@ public class SetStatusVariableStep extends AbstractStepImpl implements Serializa
     return name;
   }
 
+  public String getTable() {
+    return table;
+  }
+
+  @DataBoundSetter
+  public void setTable(String table) {
+    this.table = table;
+  }
+
+  public Integer getColumn() {
+    return column;
+  }
+
+  @DataBoundSetter
+  public void setColumn(Integer column) {
+    this.column = column;
+  }
+
   public static class Execution extends AbstractSynchronousNonBlockingStepExecution<Void> {
 
     @StepContextParameter
@@ -70,7 +90,10 @@ public class SetStatusVariableStep extends AbstractStepImpl implements Serializa
     @Override
     protected Void run() throws Exception {
       PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(build, true);
-      status.set(step.getName(), step.getValue(), step.getType());
+      if (step.type == null) {
+        step.type = DataType.OBJECT;
+      }
+      status.set(step.getName(), step.getValue(), step.getType(), step.getTable(), step.getColumn());
       return null;
     }
   }

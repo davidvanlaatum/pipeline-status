@@ -1,0 +1,16 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:local="local">
+  <td data="${it.sortValue}" class="data-type-${it.type}">
+    <j:if test="${it.isList()}">
+      <ul class="pipeline-status-list">
+        <j:forEach items="${it.value}" var="l">
+          <li>${l}</li>
+        </j:forEach>
+      </ul>
+    </j:if>
+    <j:if test="${!it.isList()}">
+      ${it}
+    </j:if>
+  </td>
+</j:jelly>

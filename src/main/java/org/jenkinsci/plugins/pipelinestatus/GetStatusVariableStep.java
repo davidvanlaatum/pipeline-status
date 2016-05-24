@@ -2,8 +2,6 @@ package org.jenkinsci.plugins.pipelinestatus;
 
 import hudson.Extension;
 import hudson.model.Run;
-import hudson.model.TaskListener;
-import hudson.util.ListBoxModel;
 import org.jenkinsci.plugins.workflow.steps.*;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -18,6 +16,8 @@ public class GetStatusVariableStep extends AbstractStepImpl implements Serializa
   @Extension
   public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
   private final String name;
+  private String table;
+  private Integer column;
 
   @DataBoundConstructor
   public GetStatusVariableStep(@NotNull String name) {
@@ -27,6 +27,24 @@ public class GetStatusVariableStep extends AbstractStepImpl implements Serializa
 
   public String getName() {
     return name;
+  }
+
+  public String getTable() {
+    return table;
+  }
+
+  @DataBoundSetter
+  public void setTable(String table) {
+    this.table = table;
+  }
+
+  public Integer getColumn() {
+    return column;
+  }
+
+  @DataBoundSetter
+  public void setColumn(Integer column) {
+    this.column = column;
   }
 
   @Override
@@ -44,7 +62,7 @@ public class GetStatusVariableStep extends AbstractStepImpl implements Serializa
     @Override
     protected Object run() throws Exception {
       PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(build, true);
-      DataValue dataValue = status.get(step.name);
+      DataValue dataValue = status.get(step.name, step.getTable(), step.getColumn());
       return dataValue == null ? null : dataValue.getValue();
     }
   }

@@ -9,19 +9,38 @@
     <j:forEach items="${it.data}" var="item">
       <tr>
         <td>${item.key}</td>
-        <td data="${item.value.sortValue}" class="data-type-${item.value.type}">
-          <j:if test="${item.value.isList()}">
-            <ul class="pipeline-status-list">
-              <j:forEach items="${item.value.value}" var="l">
-                <li>${l}</li>
-              </j:forEach>
-            </ul>
-          </j:if>
-          <j:if test="${!item.value.isList()}">
-            ${item.value}
-          </j:if>
-        </td>
+        <st:include it="${item.value}" page="td.jelly"/>
       </tr>
     </j:forEach>
   </table>
+  <j:forEach items="${it.tables}" var="table">
+    <table class="pipeline_status_vars_table pane bigtable sortable stripped">
+      <caption>
+        ${table.name}
+      </caption>
+      <thead>
+        <tr>
+          <th>Key</th>
+          <j:forEach items="${table.columns}" var="c">
+            <th>${c.name}</th>
+          </j:forEach>
+        </tr>
+      </thead>
+      <tbody>
+        <j:forEach items="${table.rows}" var="row">
+          <tr>
+            <td>${row.key}</td>
+            <j:forEach items="${row.data}" var="cell">
+              <j:if test="${cell == null}">
+                <td class="data-type-null"><!----></td>
+              </j:if>
+              <j:if test="${cell != null}">
+                <st:include it="${cell}" page="td.jelly"/>
+              </j:if>
+            </j:forEach>
+          </tr>
+        </j:forEach>
+      </tbody>
+    </table>
+  </j:forEach>
 </j:jelly>

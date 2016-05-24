@@ -17,6 +17,8 @@ public class DecStatusVariableStep extends AbstractStepImpl implements Serializa
   public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
   private final String name;
   private Integer amount = 1;
+  private String table;
+  private Integer column;
 
   @DataBoundConstructor
   public DecStatusVariableStep(@NotNull String name) {
@@ -37,6 +39,24 @@ public class DecStatusVariableStep extends AbstractStepImpl implements Serializa
     this.amount = amount;
   }
 
+  public String getTable() {
+    return table;
+  }
+
+  @DataBoundSetter
+  public void setTable(String table) {
+    this.table = table;
+  }
+
+  public Integer getColumn() {
+    return column;
+  }
+
+  @DataBoundSetter
+  public void setColumn(Integer column) {
+    this.column = column;
+  }
+
   @Override
   public StepDescriptor getDescriptor() {
     return DESCRIPTOR;
@@ -52,11 +72,11 @@ public class DecStatusVariableStep extends AbstractStepImpl implements Serializa
     @Override
     protected Void run() throws Exception {
       PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(build, true);
-      DataValue dataValue = status.get(step.name);
+      DataValue dataValue = status.get(step.name, step.getTable(), step.getColumn());
       if (dataValue != null) {
         dataValue.decValue(step.amount);
       } else {
-        status.set(step.name, step.amount * -1, DataType.OBJECT);
+        status.set(step.name, step.amount * -1, DataType.OBJECT, step.getTable(), step.getColumn());
       }
       return null;
     }

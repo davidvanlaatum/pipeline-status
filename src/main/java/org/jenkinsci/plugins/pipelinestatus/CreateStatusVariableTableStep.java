@@ -2,6 +2,8 @@ package org.jenkinsci.plugins.pipelinestatus;
 
 import hudson.Extension;
 import hudson.model.Run;
+import hudson.model.TaskListener;
+import hudson.util.ListBoxModel;
 import org.jenkinsci.plugins.workflow.steps.*;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -10,51 +12,29 @@ import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
-public class IncStatusVariableStep extends AbstractStepImpl implements Serializable {
+public class CreateStatusVariableTableStep extends AbstractStepImpl implements Serializable {
 
   @Extension
   public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
   private final String name;
-  private Integer amount = 1;
-  private String table;
-  private Integer column;
+  private List<Map<String, String>> columns;
 
   @DataBoundConstructor
-  public IncStatusVariableStep(@NotNull String name) {
+  public CreateStatusVariableTableStep(@NotNull String name) {
     super();
     this.name = name;
   }
 
-  public String getName() {
-    return name;
-  }
-
-  public Integer getAmount() {
-    return amount;
+  public List<Map<String, String>> getColumns() {
+    return columns;
   }
 
   @DataBoundSetter
-  public void setAmount(Integer amount) {
-    this.amount = amount;
-  }
-
-  public String getTable() {
-    return table;
-  }
-
-  @DataBoundSetter
-  public void setTable(String table) {
-    this.table = table;
-  }
-
-  public Integer getColumn() {
-    return column;
-  }
-
-  @DataBoundSetter
-  public void setColumn(Integer column) {
-    this.column = column;
+  public void setColumns(List<Map<String, String>> columns) {
+    this.columns = columns;
   }
 
   @Override
@@ -62,25 +42,26 @@ public class IncStatusVariableStep extends AbstractStepImpl implements Serializa
     return DESCRIPTOR;
   }
 
+  public String getName() {
+    return name;
+  }
+
   public static class Execution extends AbstractSynchronousNonBlockingStepExecution<Void> {
 
     @StepContextParameter
     private transient Run build;
+    @StepContextParameter
+    private transient TaskListener taskListener;
     @Inject
-    private IncStatusVariableStep step;
+    private CreateStatusVariableTableStep step;
 
     @Override
     protected Void run() throws Exception {
       PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(build, true);
-      DataValue dataValue = status.get(step.name, step.getTable(), step.getColumn());
-      if (dataValue != null) {
-        dataValue.incValue(step.amount);
-      } else {
-        status.set(step.name, step.amount, DataType.OBJECT, step.getTable(), step.getColumn());
-      }
+      status.createTable(step.name, step.columns);
+//      status.set(step.getName(), step.getValue(), step.getType());
       return null;
     }
-
   }
 
   public static class DescriptorImpl extends AbstractStepDescriptorImpl {
@@ -90,13 +71,21 @@ public class IncStatusVariableStep extends AbstractStepImpl implements Serializa
 
     @Override
     public String getFunctionName() {
-      return "incStatusVar";
+      return "createStatusVarTable";
     }
 
     @Nonnull
     @Override
     public String getDisplayName() {
-      return "Increment Status Variable";
+      return "Create Status Variable Table";
+    }
+
+    public ListBoxModel doFillTypeItems() {
+      ListBoxModel items = new ListBoxModel();
+      for (DataType dataType : DataType.values()) {
+        items.add(dataType.name());
+      }
+      return items;
     }
   }
 }
