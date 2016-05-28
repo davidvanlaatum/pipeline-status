@@ -90,9 +90,6 @@ public class SetStatusVariableStep extends AbstractStepImpl implements Serializa
     @Override
     protected Void run() throws Exception {
       PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(build, true);
-      if (step.type == null) {
-        step.type = DataType.OBJECT;
-      }
       status.set(step.getName(), step.getValue(), step.getType(), step.getTable(), step.getColumn());
       return null;
     }

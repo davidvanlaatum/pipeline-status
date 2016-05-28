@@ -71,6 +71,9 @@ public class PipelineStatusAction extends Actionable implements Action {
       if (value == null) {
         data.remove(name);
       } else {
+        if (type == null) {
+          type = DataType.OBJECT;
+        }
         data.put(name, new DataValue().setType(type).setValue(value).covertAsNeeded());
       }
     } else {
@@ -79,10 +82,10 @@ public class PipelineStatusAction extends Actionable implements Action {
         throw new IllegalArgumentException("table " + tableName + " does not exit");
       }
       Row row = table.getRow(name, true);
-      if (type == null) {
-        type = table.getColumn(column).getDefaultType();
-      }
       if (column != null) {
+        if (type == null) {
+          type = table.getColumn(column).getDefaultType();
+        }
         if (value == null) {
           row.setColumn(column, null);
         } else {

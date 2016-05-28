@@ -5,7 +5,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Column implements Serializable {
-  static Logger LOG = Logger.getLogger(Column.class.getName());
   private String name;
   private DataType defaultType = DataType.OBJECT;
 
@@ -23,7 +22,6 @@ public class Column implements Serializable {
   }
 
   public String getName() {
-    LOG.log(Level.INFO, "returning name {0}", name);
     return name;
   }
 }
