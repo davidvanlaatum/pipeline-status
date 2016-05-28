@@ -7,4 +7,10 @@
   <f:entry title="Amount" field="amount">
     <f:number default="1"/>
   </f:entry>
+  <f:entry title="Table" field="table">
+    <f:textbox/>
+  </f:entry>
+  <f:entry title="Column" field="column">
+    <f:textbox/>
+  </f:entry>
 </j:jelly>

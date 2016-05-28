@@ -7,4 +7,10 @@
   <f:entry title="Value" field="value" description="Can be anything that calling toString on will render useful output">
     <f:textbox/>
   </f:entry>
+  <f:entry title="Table" field="table">
+    <f:textbox/>
+  </f:entry>
+  <f:entry title="Column" field="column">
+    <f:textbox/>
+  </f:entry>
 </j:jelly>
