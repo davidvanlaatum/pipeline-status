@@ -30,10 +30,28 @@ class StatusVars implements Serializable {
         status.set(name, value, type, null, null);
     }
 
-    public DataTable getTable(String name) {
+    public void inc(String name) {
+        inc(name, 1);
+    }
+
+    public void inc(String name, int value) {
+        PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(script.$build(), true);
+        status.get(name, null, null).incValue(value);
+    }
+
+    public void dec(String name) {
+        dec(name, 1);
+    }
+
+    public void dec(String name, int value) {
+        PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(script.$build(), true);
+        status.get(name, null, null).decValue(value);
+    }
+
+    public Table getTable(String name) {
         PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(script.$build(), false);
         if (status != null)
-            return status.getTable(name);
+            return new Table(name, script);
         else
             return null;
     }
