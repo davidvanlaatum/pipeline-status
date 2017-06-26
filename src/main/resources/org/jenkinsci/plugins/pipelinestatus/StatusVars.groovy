@@ -95,18 +95,18 @@ class StatusVars implements Serializable {
             inc(name, index, 1);
         }
 
-        public void inc(String name, int index, int value) {
+        public void inc(String key, int index, int value) {
             PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(script.$build(), true);
-            status.get(name, name, index).incValue(value);
+            status.get(key, name, index).incValue(value);
         }
 
         public void dec(String name,int index) {
             dec(name, index,1);
         }
 
-        public void dec(String name, int index, int value) {
+        public void dec(String key, int index, int value) {
             PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(script.$build(), true);
-            status.get(name, name, index).decValue(value);
+            status.get(key, name, index).decValue(value);
         }
     }
 }
