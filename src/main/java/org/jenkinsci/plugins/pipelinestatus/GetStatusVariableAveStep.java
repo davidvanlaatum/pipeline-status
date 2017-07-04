@@ -104,7 +104,7 @@ public class GetStatusVariableAveStep extends AbstractStepImpl implements Serial
     private Double getAverageFor(String name) {
       Run b = build;
       int count = 0;
-      List<Number> values = new ArrayList<>(step.count);
+      List<Number> values = new ArrayList<>();
       while (b != null && count < step.count) {
         PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(b, false);
         if (status != null) {

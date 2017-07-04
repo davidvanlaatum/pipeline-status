@@ -65,8 +65,8 @@ public class PipelineStatusAction extends Actionable implements Action {
   }
 
   public void set(String name, Object value, DataType type, String tableName, Integer column) {
-    LOG.log(Level.FINE, "Setting {0} to {1} type {2} class {3}",
-        new Object[]{name, value, type, value == null ? null : value.getClass()});
+    LOG.log(Level.FINE, "Setting {0} to {1} type {2} class {3} column {4}",
+        new Object[]{name, value, type, value == null ? null : value.getClass(), column});
     if (tableName == null) {
       if (value == null) {
         data.remove(name);

@@ -44,8 +44,8 @@ public class DataValue implements Serializable {
         rt = value != null ? value.toString() : null;
         break;
       case INTERVAL:
-        if (value instanceof Long) {
-          rt = new Period(((Long) value).longValue()).toString(new PeriodFormatterBuilder()
+        if (value instanceof Number) {
+          rt = new Period(((Number) value).longValue()).toString(new PeriodFormatterBuilder()
               .printZeroRarelyLast()
               .appendHours()
               .appendSuffix("h")

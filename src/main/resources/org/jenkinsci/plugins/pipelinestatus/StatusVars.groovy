@@ -108,5 +108,47 @@ class StatusVars implements Serializable {
             PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(script.$build(), true);
             status.get(key, name, index).decValue(value);
         }
+
+        public Double getave(String key, int index, int builds = 30) {
+            def values = [];
+            def build = script.$build().previousCompletedBuild
+            while (build && builds > 0) {
+                PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(build, false)
+                builds--;
+                if (status) {
+                    try {
+                        def val = status.get(key, name, index)
+                        if (val.getValue() instanceof Number) {
+                            values.push(val.getValue());
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+                build = build.previousCompletedBuild
+            }
+
+            Double rt;
+            if (!values.empty) {
+                Double sum = 0;
+                values.each {
+                    sum += it
+                }
+                rt = sum / values.size()
+            }
+            return rt;
+        }
+
+        public Map<String, Double> calcAverages(int valueIndex, int aveIndex, int builds = 30) {
+            Map<String, Double> rt = [:]
+            PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(script.$build(), true);
+            status.getTable(name).rows.each { row ->
+                try {
+                    rt[row.key] = getave(row.key, valueIndex, builds)
+                    set(row.key, aveIndex, rt[row.key])
+                } catch (Exception e) {
+                }
+            }
+            return rt;
+        }
     }
 }
