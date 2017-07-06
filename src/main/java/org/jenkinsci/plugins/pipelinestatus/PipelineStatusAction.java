@@ -2,8 +2,11 @@ package org.jenkinsci.plugins.pipelinestatus;
 
 import hudson.model.Action;
 import hudson.model.Actionable;
+import hudson.model.Api;
 import hudson.model.Run;
 import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
@@ -21,6 +24,10 @@ public class PipelineStatusAction extends Actionable implements Action {
 
   public PipelineStatusAction(Run build) {
     this.build = build;
+  }
+
+  public Api getApi() {
+    return new Api(this);
   }
 
   public static PipelineStatusAction getPipelineStatusAction(Run<?,?> build, boolean create) {
@@ -45,6 +52,11 @@ public class PipelineStatusAction extends Actionable implements Action {
   }
 
   @Override
+  public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) {
+    return getTable(token);
+  }
+
+  @Override
   public String getDisplayName() {
     return "Workflow Status";
   }
@@ -56,7 +68,7 @@ public class PipelineStatusAction extends Actionable implements Action {
 
   @Exported(inline = true)
   public String getUrl() {
-    return build.getUrl() + "/" + getUrlName();
+    return build.getUrl() + getUrlName();
   }
 
   @Override
@@ -107,9 +119,22 @@ public class PipelineStatusAction extends Actionable implements Action {
     }
   }
 
-  @Exported
   public Map<String, DataValue> getData() {
     return data;
+  }
+
+  @Exported(name = "data", inline = true)
+  public Map<String, Object> getDataValues() {
+    Map<String, Object> rt = new TreeMap<>();
+    for (Map.Entry<String, DataValue> entry : data.entrySet()) {
+      rt.put(entry.getKey(), entry.getValue().getValue());
+    }
+    return rt;
+  }
+
+  @Exported(name = "tables", inline = true)
+  public Map<String, DataTable> getTablesByName() {
+    return Collections.unmodifiableMap(tables);
   }
 
   public Collection<DataTable> getTables() {
