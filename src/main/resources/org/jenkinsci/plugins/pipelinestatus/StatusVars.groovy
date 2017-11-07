@@ -48,6 +48,17 @@ class StatusVars implements Serializable {
         status.get(name, null, null).decValue(value);
     }
 
+    public void append(String name, Object value) {
+        PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(script.$build(), true);
+        def var = status.get(name, null, null);
+        if (var.isList()) {
+            var.append(value);
+        } else {
+            var.setType(DataType.LIST);
+            var.setValue(new ArrayList<>(Collections.singletonList(value)));
+        }
+    }
+
     public Table getTable(String name) {
         PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(script.$build(), false);
         if (status != null)
@@ -79,6 +90,16 @@ class StatusVars implements Serializable {
         public Object get(String key, Integer index) {
             PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(script.$build(), true);
             return status.get(key, name, index);
+        }
+
+        public void append(String name, Integer index, Object value) {
+            def var = get(name, index);
+            if (var.isList()) {
+                var.append(value);
+            } else {
+                var.setType(DataType.LIST);
+                var.setValue(new ArrayList<>(Collections.singletonList(value)));
+            }
         }
 
         public <V> V time(String key, Integer index, Closure<V> body) {
@@ -127,7 +148,7 @@ class StatusVars implements Serializable {
                 build = build.previousCompletedBuild
             }
 
-            Double rt;
+            Double rt = null;
             if (!values.empty) {
                 Double sum = 0;
                 values.each {
