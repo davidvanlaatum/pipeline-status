@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.pipelinestatus
 
+import com.cloudbees.groovy.cps.NonCPS
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class StatusVars implements Serializable {
@@ -9,6 +10,7 @@ class StatusVars implements Serializable {
         this.script = script
     }
 
+    @NonCPS
     public Object get(String name) {
         PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(script.$build(), false);
         if (status != null)
@@ -26,8 +28,7 @@ class StatusVars implements Serializable {
     }
 
     public void set(String name, Object value, DataType type) {
-        PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(script.$build(), true);
-        status.set(name, value, type, null, null);
+        PipelineStatusAction.getPipelineStatusAction(script.$build(), true).set(name, value, type, null, null);
     }
 
     public void inc(String name) {
@@ -35,8 +36,7 @@ class StatusVars implements Serializable {
     }
 
     public void inc(String name, int value) {
-        PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(script.$build(), true);
-        status.get(name, null, null).incValue(value);
+        PipelineStatusAction.getPipelineStatusAction(script.$build(), true).get(name, null, null).incValue(value);
     }
 
     public void dec(String name) {
@@ -44,14 +44,16 @@ class StatusVars implements Serializable {
     }
 
     public void dec(String name, int value) {
-        PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(script.$build(), true);
-        status.get(name, null, null).decValue(value);
+        PipelineStatusAction.getPipelineStatusAction(script.$build(), true).get(name, null, null).decValue(value);
     }
 
+    @NonCPS
     public void append(String name, Object value) {
         PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(script.$build(), true);
         def var = status.get(name, null, null);
-        if (var.isList()) {
+        if (var == null) {
+            status.set(name, value, DataType.LIST, null, null);
+        } else if (var.isList()) {
             var.append(value);
         } else {
             var.setType(DataType.LIST);
@@ -60,16 +62,14 @@ class StatusVars implements Serializable {
     }
 
     public Table getTable(String name) {
-        PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(script.$build(), false);
-        if (status != null)
+        if (PipelineStatusAction.getPipelineStatusAction(script.$build(), false) != null)
             return new Table(name, script);
         else
             return null;
     }
 
     public Table createTable(String name, List<Map<String, String>> columns) {
-        PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(script.$build(), true);
-        status.createTable(name, columns);
+        PipelineStatusAction.getPipelineStatusAction(script.$build(), true).createTable(name, columns);
         return new Table(name, script);
     }
 
@@ -83,13 +83,11 @@ class StatusVars implements Serializable {
         }
 
         public void set(String key, Integer index, Object value) {
-            PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(script.$build(), true);
-            status.set(key, value, null, name, index);
+            PipelineStatusAction.getPipelineStatusAction(script.$build(), true).set(key, value, null, name, index);
         }
 
         public Object get(String key, Integer index) {
-            PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(script.$build(), true);
-            return status.get(key, name, index);
+            return PipelineStatusAction.getPipelineStatusAction(script.$build(), true).get(key, name, index);
         }
 
         public void append(String name, Integer index, Object value) {
@@ -117,19 +115,18 @@ class StatusVars implements Serializable {
         }
 
         public void inc(String key, int index, int value) {
-            PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(script.$build(), true);
-            status.get(key, name, index).incValue(value);
+            PipelineStatusAction.getPipelineStatusAction(script.$build(), true).get(key, name, index).incValue(value);
         }
 
-        public void dec(String name,int index) {
-            dec(name, index,1);
+        public void dec(String name, int index) {
+            dec(name, index, 1);
         }
 
         public void dec(String key, int index, int value) {
-            PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(script.$build(), true);
-            status.get(key, name, index).decValue(value);
+            PipelineStatusAction.getPipelineStatusAction(script.$build(), true).get(key, name, index).decValue(value);
         }
 
+        @NonCPS
         public Double getave(String key, int index, int builds = 30) {
             def values = [];
             def build = script.$build().previousCompletedBuild
@@ -159,6 +156,7 @@ class StatusVars implements Serializable {
             return rt;
         }
 
+        @NonCPS
         public Map<String, Double> calcAverages(int valueIndex, int aveIndex, int builds = 30) {
             Map<String, Double> rt = [:]
             PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(script.$build(), true);
