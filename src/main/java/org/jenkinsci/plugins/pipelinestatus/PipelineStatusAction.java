@@ -19,8 +19,8 @@ public class PipelineStatusAction extends Actionable implements Action {
   private static final Logger LOG = Logger.getLogger(PipelineStatusAction.class.getName());
 
   private final Run build;
-  private Map<String, DataValue> data = new TreeMap<>();
-  private Map<String, DataTable> tables = new TreeMap<>();
+  private Map<String, DataValue> data = Collections.synchronizedMap(new TreeMap<>());
+  private Map<String, DataTable> tables = Collections.synchronizedMap(new TreeMap<>());
 
   public PipelineStatusAction(Run build) {
     this.build = build;
