@@ -2,9 +2,12 @@ package org.jenkinsci.plugins.pipelinestatus
 
 import com.cloudbees.groovy.cps.NonCPS
 import org.jenkinsci.plugins.workflow.cps.CpsScript
+import java.util.logging.Level
+import java.util.logging.Logger
 
 class StatusVars implements Serializable {
     private CpsScript script
+    private static Logger LOG = Logger.getLogger(StatusVars.getClass().getName());
 
     public StatusVars(CpsScript script) {
         this.script = script
@@ -160,14 +163,22 @@ class StatusVars implements Serializable {
         public Map<String, Double> calcAverages(int valueIndex, int aveIndex, int builds = 30) {
             Map<String, Double> rt = [:]
             PipelineStatusAction status = PipelineStatusAction.getPipelineStatusAction(script.$build(), true);
-            status.getTable(name).rows.each { row ->
+            def table = status.getTable(name)
+            table.rows.each { row ->
                 try {
                     rt[row.key] = getave(row.key, valueIndex, builds)
-                    set(row.key, aveIndex, rt[row.key])
+                    def v = row.getColumn(aveIndex)
+                    if (!v) {
+                        v = new DataValue()
+                        v.setType(DataType.INTERVAL)
+                        row.setColumn(aveIndex, v)
+                    }
+                    v.setValue(rt[row.key])
                 } catch (Exception e) {
+                    LOG.log(Level.WARNING, "Exception during average calculation", e)
                 }
             }
-            return rt;
+            return rt
         }
     }
 }
