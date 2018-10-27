@@ -44,8 +44,17 @@ public class DataValue implements Serializable {
         rt = value != null ? value.toString() : null;
         break;
       case INTERVAL:
+      case TIMER:
+        Period p = null;
         if (value instanceof Number) {
-          rt = new Period(((Number) value).longValue()).toString(new PeriodFormatterBuilder()
+          if(type == DataType.INTERVAL) {
+            p = new Period(((Number) value).longValue());
+          } else {
+            p = new Period(System.currentTimeMillis() - ((Number) value).longValue());
+          }
+        }
+        if (p != null) {
+          rt = p.toString(new PeriodFormatterBuilder()
               .printZeroRarelyLast()
               .appendHours()
               .appendSuffix("h")
@@ -56,6 +65,9 @@ public class DataValue implements Serializable {
               .appendMillis()
               .appendSuffix("ms")
               .toFormatter());
+          if(type == DataType.TIMER) {
+            rt = ">" + rt;
+          }
         }
         break;
     }

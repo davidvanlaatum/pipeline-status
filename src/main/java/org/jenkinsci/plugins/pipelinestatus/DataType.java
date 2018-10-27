@@ -4,5 +4,6 @@ public enum DataType {
   OBJECT,
   INTERVAL,
   NUMBER,
-  LIST
+  LIST,
+  TIMER
 }

@@ -85,8 +85,8 @@ class StatusVars implements Serializable {
             this.script = script;
         }
 
-        public void set(String key, Integer index, Object value) {
-            PipelineStatusAction.getPipelineStatusAction(script.$build(), true).set(key, value, null, name, index);
+        public void set(String key, Integer index, Object value, DataType type = null) {
+            PipelineStatusAction.getPipelineStatusAction(script.$build(), true).set(key, value, type, name, index);
         }
 
         public Object get(String key, Integer index) {
@@ -104,12 +104,13 @@ class StatusVars implements Serializable {
         }
 
         public <V> V time(String key, Integer index, Closure<V> body) {
-            def start = System.currentTimeMillis();
+            def start = System.currentTimeMillis()
             try {
-                return body();
+                set(key, index, start, DataType.TIMER)
+                return body()
             } finally {
-                def end = System.currentTimeMillis();
-                set(key, index, end - start);
+                def end = System.currentTimeMillis()
+                set(key, index, end - start)
             }
         }
 
