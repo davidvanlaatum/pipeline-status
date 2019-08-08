@@ -19,8 +19,8 @@ public class PipelineStatusAction extends Actionable implements Action {
   private static final Logger LOG = Logger.getLogger(PipelineStatusAction.class.getName());
 
   private final Run build;
-  private Map<String, DataValue> data = Collections.synchronizedMap(new TreeMap<>());
-  private Map<String, DataTable> tables = Collections.synchronizedMap(new TreeMap<>());
+  private Map<String, DataValue> data = new TreeMap<>();
+  private Map<String, DataTable> tables = new TreeMap<>();
 
   public PipelineStatusAction(Run build) {
     this.build = build;
@@ -52,7 +52,7 @@ public class PipelineStatusAction extends Actionable implements Action {
   }
 
   @Override
-  public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) {
+  public synchronized Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) {
     return getTable(token);
   }
 
@@ -76,7 +76,7 @@ public class PipelineStatusAction extends Actionable implements Action {
     return null;
   }
 
-  public void set(String name, Object value, DataType type, String tableName, Integer column) {
+  public synchronized void set(String name, Object value, DataType type, String tableName, Integer column) {
     LOG.log(Level.FINE, "Setting {0} to {1} type {2} class {3} column {4}",
         new Object[]{name, value, type, value == null ? null : value.getClass(), column});
     if (tableName == null) {
@@ -119,12 +119,12 @@ public class PipelineStatusAction extends Actionable implements Action {
     }
   }
 
-  public Map<String, DataValue> getData() {
+  public synchronized Map<String, DataValue> getData() {
     return data;
   }
 
   @Exported(name = "data", inline = true)
-  public Map<String, Object> getDataValues() {
+  public synchronized Map<String, Object> getDataValues() {
     Map<String, Object> rt = new TreeMap<>();
     for (Map.Entry<String, DataValue> entry : data.entrySet()) {
       rt.put(entry.getKey(), entry.getValue().getValue());
@@ -133,24 +133,24 @@ public class PipelineStatusAction extends Actionable implements Action {
   }
 
   @Exported(name = "tables", inline = true)
-  public Map<String, DataTable> getTablesByName() {
+  public synchronized Map<String, DataTable> getTablesByName() {
     return Collections.unmodifiableMap(tables);
   }
 
-  public Collection<DataTable> getTables() {
+  public synchronized Collection<DataTable> getTables() {
     return Collections.unmodifiableCollection(tables.values());
   }
 
   @DataBoundSetter
-  public void setData(Map<String, DataValue> data) {
+  public synchronized void setData(Map<String, DataValue> data) {
     this.data = data;
   }
 
-  public boolean hasData() {
+  public synchronized boolean hasData() {
     return !data.isEmpty();
   }
 
-  public DataValue get(String name, String table, Integer column) {
+  public synchronized DataValue get(String name, String table, Integer column) {
     if (table == null) {
       return data.get(name);
     } else {
@@ -187,7 +187,7 @@ public class PipelineStatusAction extends Actionable implements Action {
     }
   }
 
-  public DataTable getTable(String name) {
+  public synchronized DataTable getTable(String name) {
     return tables.get(name);
   }
 }
